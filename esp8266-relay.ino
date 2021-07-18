@@ -10,41 +10,21 @@ ESP8266WebServer server(80);
 void handleHttpRequest() {
   digitalWrite(LED_BUILTIN, HIGH);
 
+  if (server.hasArg("on")) {
+    digitalWrite(PIN_RELAY, HIGH);
+    server.send(200, "text/html", "<html><body><h1>Ok</h1><p>Relay ON</p></body></html>");
+  } else if (server.hasArg("off")) {
+    digitalWrite(PIN_RELAY, LOW);
+    server.send(200, "text/html", "<html><body><h1>Ok</h1><p>Relay OFF</p></body></html>");
+  }
+
   if (digitalRead(PIN_RELAY) == HIGH) {
     server.send(200, "text/html", "<html><body><h1>Ok</h1><p>Relay ON</p></body></html>");
   } else {
     server.send(200, "text/html", "<html><body><h1>Ok</h1><p>Relay OFF</p></body></html>");
   }
-
-  /*
-  String value server.arg('on');
-  int number = value.toInt();
-  if(number) {
-    digitalWrite(PIN_RELAY, HIGH);
-  } else {
-    digitalWrite(PIN_RELAY, LOW);
-  }
-  */
   
   server.send(200, "text/html", "<html><body><h1>Ok</h1></body></html>");
-  digitalWrite(LED_BUILTIN, LOW);
-}
-
-void switchOn() {
-  digitalWrite(LED_BUILTIN, HIGH);
-
-  digitalWrite(PIN_RELAY, HIGH);
-  server.send(200, "text/html", "<html><body><h1>Ok</h1><p>Relay ON</p></body></html>");
-
-  digitalWrite(LED_BUILTIN, LOW);
-}
-
-void switchOff() {
-  digitalWrite(LED_BUILTIN, HIGH);
-
-  digitalWrite(PIN_RELAY, LOW);
-  server.send(200, "text/html", "<html><body><h1>Ok</h1><p>Relay OFF</p></body></html>");
-
   digitalWrite(LED_BUILTIN, LOW);
 }
 
@@ -70,8 +50,6 @@ void setup() {
   Serial.println(WiFi.localIP());
 
   server.on("/", handleHttpRequest);
-  server.on("/on", switchOn);
-  server.on("/off", switchOff);
   server.onNotFound(handleNotFound);
   server.begin();
   Serial.println("HTTP server started");
