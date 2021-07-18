@@ -1,4 +1,5 @@
 #include <Arduino.h>
+#include <ArduinoOTA.h>
 #include <ESP8266WiFi.h>
 #include <ESP8266WebServer.h>
 #include "config.h"
@@ -49,6 +50,10 @@ void setup() {
   Serial.print("Connected to WiFi with IP address: ");
   Serial.println(WiFi.localIP());
 
+  ArduinoOTA.setHostname(OTA_HOST);
+  ArduinoOTA.setPassword(OTA_PASS);
+  ArduinoOTA.begin();
+
   server.on("/", handleHttpRequest);
   server.onNotFound(handleNotFound);
   server.begin();
@@ -58,5 +63,6 @@ void setup() {
 }
 
 void loop() {
+  ArduinoOTA.handle();
   server.handleClient();
 }
